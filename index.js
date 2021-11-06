@@ -24,6 +24,16 @@ const run = async () => {
             const result = await appointmentsCollection.insertOne(doc);
             res.json(result);
         })
+
+        //GET SIGNLE PATIENT APPOINTMENTS
+        app.get('/appointments', async (req, res) => {
+            const uid = req.query.uid;
+            const query = { patientUid: uid };
+            const cursor = appointmentsCollection.find(query);
+            const result = await cursor.toArray();
+            res.json(result);
+        })
+
     }
     finally {
 
