@@ -7,6 +7,7 @@ require('dotenv').config();
 
 //MIDDLEWARE
 app.use(cors());
+app.use(express.json())
 //MONGO CONNECT
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.urbpc.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -14,7 +15,15 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 const run = async () => {
     try {
         await client.connect();
-        console.log('mongo db connected')
+        const database = client.db('doctors_portal')
+        const appointmentsCollection = database.collection('appointments');
+
+        //ADD A APPOINTMENT
+        app.post('/appointment/book', async (req, res) => {
+            const doc = req.body;
+            const result = await appointmentsCollection.insertOne(doc);
+            res.json(result);
+        })
     }
     finally {
 
