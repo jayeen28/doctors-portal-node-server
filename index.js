@@ -17,7 +17,7 @@ const run = async () => {
         await client.connect();
         const database = client.db('doctors_portal')
         const appointmentsCollection = database.collection('appointments');
-
+        const usersCollection = database.collection('users');
         //ADD A APPOINTMENT
         app.post('/appointment/book', async (req, res) => {
             const doc = req.body;
@@ -32,6 +32,16 @@ const run = async () => {
             const query = { patientUid: uid, treatmentDate: date };
             const cursor = appointmentsCollection.find(query);
             const result = await cursor.toArray();
+            res.json(result);
+        })
+
+        //SEND USER DATA TO DATABASE
+        app.put('/users', async (req, res) => {
+            const uid = req.body.uid;
+            const query = { uid: uid };
+            const options = { upsert: true };
+            const updatedoc = { $set: req.body };
+            const result = await usersCollection.updateOne(query, updatedoc, options);
             res.json(result);
         })
 
