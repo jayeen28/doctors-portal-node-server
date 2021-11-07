@@ -44,6 +44,14 @@ const run = async () => {
             const result = await usersCollection.updateOne(query, updatedoc, options);
             res.json(result);
         })
+        //ADD ADMIN ROLE
+        app.put('/users/admin', async (req, res) => {
+            const adminEmail = req.body.adminEmail;
+            const query = { email: adminEmail };
+            const updatedoc = { $set: { role: 'admin' } };
+            const result = await usersCollection.updateOne(query, updatedoc);
+            res.json(result);
+        })
 
     }
     finally {
