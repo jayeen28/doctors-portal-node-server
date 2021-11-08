@@ -1,8 +1,8 @@
 const express = require('express');
-const admin = require("firebase-admin");
-const { MongoClient } = require('mongodb');
 const app = express();
 const cors = require('cors');
+const admin = require("firebase-admin");
+const { MongoClient } = require('mongodb');
 const port = process.env.PORT || 5000;
 require('dotenv').config();
 
@@ -25,6 +25,7 @@ const verifyToken = async (req, res, next) => {
         try {
             const decodedUser = await admin.auth().verifyIdToken(token);
             req.decodedEmail = decodedUser.email;
+            res.header("Access-Control-Allow-Origin", "*")
         }
         catch {
 
