@@ -44,6 +44,7 @@ const run = async () => {
             const result = await usersCollection.updateOne(query, updatedoc, options);
             res.json(result);
         })
+
         //ADD ADMIN ROLE
         app.put('/users/admin', async (req, res) => {
             const adminEmail = req.body.adminEmail;
@@ -53,6 +54,19 @@ const run = async () => {
             res.json(result);
         })
 
+        //FILTER IF CURRENT USER ADMIN OR NOT
+        app.get('/users/:uid', async (req, res) => {
+            const uid = req.params.uid;
+            const query = { uid: uid, role: 'admin' }
+            const result = await usersCollection.findOne(query);
+            if (result) {
+                res.json({ isAdmin: true })
+            }
+            else {
+                res.json({ isAdmin: false })
+            }
+
+        })
     }
     finally {
 
