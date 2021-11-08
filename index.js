@@ -25,13 +25,12 @@ const verifyToken = async (req, res, next) => {
         try {
             const decodedUser = await admin.auth().verifyIdToken(token);
             req.decodedEmail = decodedUser.email;
-            res.header("Access-Control-Allow-Origin", "*")
         }
         catch {
 
         }
     }
-
+    res.header({ "Access-Control-Allow-Origin": "*" });
     next();
 }
 //
