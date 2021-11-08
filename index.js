@@ -54,7 +54,7 @@ const run = async () => {
         //GET SIGNLE PATIENT APPOINTMENTS
         app.get('/appointments', async (req, res) => {
             const uid = req.query.uid;
-            const date = new Date(req.query.date).toDateString();
+            const date = req.query.date;
             const query = { patientUid: uid, treatmentDate: date };
             const cursor = appointmentsCollection.find(query);
             const result = await cursor.toArray();
