@@ -98,10 +98,6 @@ const run = async () => {
             if (result) {
                 res.json({ isAdmin: true })
             }
-            else {
-                res.json({ isAdmin: false })
-            }
-
         })
     }
     finally {
