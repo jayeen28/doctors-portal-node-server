@@ -94,8 +94,11 @@ const run = async () => {
             const uid = req.params.uid;
             const query = { uid: uid, role: 'admin' }
             const result = await usersCollection.findOne(query);
-            if (result) {
+            if (result?.role === 'admin') {
                 res.json({ isAdmin: true })
+            }
+            else {
+                res.json({ isAdmin: false })
             }
         })
     }
