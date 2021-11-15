@@ -1,10 +1,12 @@
 const express = require('express');
 const app = express();
+require('dotenv').config();
 const cors = require('cors');
 const admin = require("firebase-admin");
 const { MongoClient } = require('mongodb');
+const ObjectId = require('mongodb').ObjectId;
+const stripe = require('stripe')(process.env.STRIPE_SECRET);
 const port = process.env.PORT || 5000;
-require('dotenv').config();
 
 
 
@@ -89,6 +91,14 @@ const run = async () => {
             }
         })
 
+        //GET APPOINTMENT INFO
+        app.get('/appointment/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const appointment = await appointmentsCollection.findOne(query);
+            res.json(appointment);
+        })
+
         //FILTER IF CURRENT USER ADMIN OR NOT
         app.get('/users/:uid', async (req, res) => {
             const uid = req.params.uid;
@@ -101,6 +111,33 @@ const run = async () => {
                 res.json({ isAdmin: false })
             }
         })
+
+        //PAYMENT
+        app.post('/create-payment-intent', async (req, res) => {
+            const paymentInfo = req.body;
+            const amount = paymentInfo.price * 100;
+            const paymentIntent = await stripe.paymentIntents.create({
+                amount: amount,
+                currency: 'usd',
+                payment_method_types: ['card']
+            });
+            res.json({ clientSecret: paymentIntent.client_secret })
+        });
+
+        //UPDATE APPOINTMENT AFTER PAYMENT
+        app.put('/appointment/:id', async (req, res) => {
+            const id = req.params.id;
+            const payment = req.body;
+            const query = { _id: ObjectId(id) }
+            const updatedoc = {
+                $set: {
+                    payment: payment
+                }
+            }
+            const result = await appointmentsCollection.updateOne(query, updatedoc);
+            res.json(result)
+        })
+
     }
     finally {
 
